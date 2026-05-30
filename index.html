@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fit Life | Fitness Calculators</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <h1>Fit Life</h1>
+        <nav>
+            <a href="#bmi">BMI Calculator</a>
+            <a href="#calories">Calories Calculator</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Transform Your Body, Transform Your Life</h2>
+        <p>Calculate your BMI and daily calorie needs to start your fitness journey today.</p>
+    </section>
+
+    <!-- BMI Calculator -->
+    <section class="calculator" id="bmi">
+        <h2>BMI Calculator</h2>
+
+        <label>Height (cm)</label>
+        <input type="number" id="height" placeholder="Enter height">
+
+        <label>Weight (kg)</label>
+        <input type="number" id="weight" placeholder="Enter weight">
+
+        <button onclick="calculateBMI()">Calculate BMI</button>
+
+        <p class="result" id="bmiResult"></p>
+    </section>
+
+    <!-- Calories Calculator -->
+    <section class="calculator" id="calories">
+        <h2>Calories Calculator</h2>
+
+        <label>Age</label>
+        <input type="number" id="age" placeholder="Enter age">
+
+        <label>Gender</label>
+        <select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <label>Height (cm)</label>
+        <input type="number" id="calHeight" placeholder="Enter height">
+
+        <label>Weight (kg)</label>
+        <input type="number" id="calWeight" placeholder="Enter weight">
+
+        <button onclick="calculateCalories()">Calculate Calories</button>
+
+        <p class="result" id="calResult"></p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Fit Life | Final Semester Project</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
