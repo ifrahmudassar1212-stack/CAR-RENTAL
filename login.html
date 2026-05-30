@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HIZAUTO Login & Register</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      background:#111;
+      color:white;
+      overflow:hidden;
+    }
+
+    /* NAVBAR */
+    .navbar{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:rgba(0,0,0,0.9);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 40px;
+      z-index:100;
+    }
+
+    .logo{
+      font-size:24px;
+      font-weight:700;
+      color:white;
+    }
+
+    .logo span{
+      color:#ff7b00;
+    }
+
+    .nav-links{
+      display:flex;
+      gap:25px;
+      list-style:none;
+    }
+
+    .nav-links a{
+      color:#ccc;
+      text-decoration:none;
+      transition:0.3s;
+      font-size:14px;
+    }
+
+    .nav-links a:hover{
+      color:#ff7b00;
+    }
+
+    /* MAIN */
+    .container{
+      width:100%;
+      height:100vh;
+      display:flex;
+      padding-top:60px;
+    }
+
+    /* LEFT SIDE */
+    .form-section{
+      width:45%;
+      background:#111;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:40px;
+    }
+
+    .form-box{
+      width:100%;
+      max-width:400px;
+    }
+
+    .form-box h1{
+      font-size:32px;
+      margin-bottom:10px;
+    }
+
+    .form-box p{
+      color:#888;
+      margin-bottom:30px;
+      font-size:14px;
+    }
+
+    .input-box{
+      background:#222;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      padding:0 15px;
+      margin-bottom:18px;
+    }
+
+    .input-box i{
+      color:#ff7b00;
+      margin-right:10px;
+    }
+
+    .input-box input{
+      width:100%;
+      background:none;
+      border:none;
+      outline:none;
+      padding:15px 0;
+      color:white;
+      font-size:14px;
+    }
+
+    .input-box input::placeholder{
+      color:#666;
+    }
+
+    .main-btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      background:#ff7b00;
+      color:white;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .main-btn:hover{
+      background:#e46d00;
+    }
+
+    .switch-text{
+      margin-top:18px;
+      text-align:center;
+      color:#888;
+      font-size:14px;
+    }
+
+    .switch-text a{
+      color:#ff7b00;
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    /* RIGHT SIDE */
+    .image-section{
+      flex:1;
+      position:relative;
+    }
+
+    .image-section img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to top,rgba(0,0,0,0.7),rgba(0,0,0,0.2));
+    }
+
+    .image-content{
+      position:absolute;
+      bottom:40px;
+      left:40px;
+      z-index:2;
+    }
+
+    .image-content h1{
+      font-size:38px;
+      font-weight:700;
+    }
+
+    .image-content p{
+      margin-top:10px;
+      color:#ddd;
+    }
+
+    /* HIDE REGISTER */
+    #registerPage{
+      display:none;
+    }
+
+    @media(max-width:900px){
+      .container{
+        flex-direction:column;
+      }
+
+      .form-section{
+        width:100%;
+        height:100%;
+      }
+
+      .image-section{
+        display:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">HIZ<span>AUTO</span></div>
+
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Cars</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Booking</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+
+    <!-- LEFT FORM SECTION -->
+    <div class="form-section">
+
+      <!-- LOGIN FORM -->
+      <div class="form-box" id="loginPage">
+
+        <h1>Welcome Back</h1>
+        <p>Login to continue your journey with HIZAUTO</p>
+
+        <form id="loginForm">
+
+          <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" placeholder="Enter Email" required>
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" placeholder="Enter Password" required>
+          </div>
+
+          <button type="submit" class="main-btn">
+            Login
+          </button>
+
+        </form>
+
+        <div class="switch-text">
+          Don't have an account?
+          <a onclick="showRegister()">Register</a>
+        </div>
+
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="form-box" id="registerPage">
+
+        <h1>Create Account</h1>
+        <p>Register and start your luxury car journey</p>
+
+        <form id="registerForm">
+
+          <div class="input-box">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" placeholder="Enter Name" required>
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" placeholder="Enter Email" required>
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" placeholder="Create Password" required>
+          </div>
+
+          <button type="submit" class="main-btn">
+            Register
+          </button>
+
+        </form>
+
+        <div class="switch-text">
+          Already have an account?
+          <a onclick="showLogin()">Login</a>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT IMAGE SECTION -->
+    <div class="image-section">
+
+      <div class="overlay"></div>
+
+      <img src="https://images.pexels.com/photos/12681060/pexels-photo-12681060.jpeg"
+        alt="Car Image">
+
+      <div class="image-content">
+        <h1>Drive Your Dream Car</h1>
+        <p>Luxury • Comfort • Performance</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT -->
+<script>
+
+  // SHOW REGISTER PAGE
+  function showRegister(){
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("registerPage").style.display = "block";
+  }
+
+  // SHOW LOGIN PAGE
+  function showLogin(){
+    document.getElementById("registerPage").style.display = "none";
+    document.getElementById("loginPage").style.display = "block";
+  }
+
+  // LOGIN FORM
+  document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    alert("Login Successful!");
+
+    // GO TO HOME PAGE
+    window.location.href = "index.html";
+  });
+
+  // REGISTER FORM
+  document.getElementById("registerForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    alert("Registration Successful!");
+
+    // BACK TO LOGIN
+    showLogin();
+  });
+
+</script>
+
+</body>
+</html>
