@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Logout</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background:#111;min-height:100vh;color:#fff;}
+
+.navbar{
+    width:100%;padding:18px 40px;background:#000;
+    border-bottom:2px solid #ff7b00;display:flex;
+    justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:10px;
+}
+.logo{font-size:30px;font-weight:700;color:#fff;text-decoration:none;}
+.logo span{color:#ff7b00;}
+
+.logout-container{
+    min-height:calc(100vh - 70px);display:flex;
+    justify-content:center;align-items:center;padding:40px 20px;
+    background:linear-gradient(rgba(0,0,0,0.85),rgba(0,0,0,0.85)),
+    url('https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg');
+    background-size:cover;background-position:center;
+}
+
+.logout-card{
+    width:100%;max-width:450px;background:rgba(20,20,20,0.97);
+    padding:50px 40px;border-radius:20px;text-align:center;
+    border:1px solid rgba(255,123,0,0.3);
+    box-shadow:0 0 30px rgba(255,123,0,0.1);
+}
+
+.logout-icon{
+    width:80px;height:80px;background:#1a1a1a;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 25px;border:2px solid #ff7b00;
+}
+.logout-icon i{font-size:32px;color:#ff7b00;}
+
+.logout-card h1{font-size:28px;margin-bottom:12px;}
+.logout-card p{color:#aaa;font-size:15px;line-height:1.6;margin-bottom:35px;}
+
+.btn-group{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;}
+
+.btn-confirm{
+    padding:14px 32px;background:#e74c3c;border:none;
+    border-radius:10px;color:#fff;font-size:15px;font-weight:600;
+    cursor:pointer;transition:0.3s;
+}
+.btn-confirm:hover{background:#c0392b;transform:translateY(-2px);}
+
+.btn-cancel{
+    padding:14px 32px;background:#222;border:1px solid #444;
+    border-radius:10px;color:#fff;font-size:15px;font-weight:600;
+    cursor:pointer;transition:0.3s;text-decoration:none;
+    display:inline-flex;align-items:center;
+}
+.btn-cancel:hover{background:#333;}
+
+/* Countdown state */
+.countdown-msg{
+    margin-top:20px;color:#888;font-size:14px;display:none;
+}
+.countdown-msg span{color:#ff7b00;font-weight:600;}
+
+@media(max-width:500px){
+    .logout-card{padding:35px 25px;}
+    .btn-group{flex-direction:column;}
+    .btn-confirm,.btn-cancel{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+</nav>
+
+<div class="logout-container">
+    <div class="logout-card">
+
+        <div class="logout-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+
+        <h1>Logging Out?</h1>
+        <p>You are about to log out of the HizAuto admin dashboard. Any unsaved changes will be lost.</p>
+
+        <div class="btn-group">
+            <button class="btn-confirm" onclick="confirmLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Yes, Logout
+            </button>
+            <a href="dashboard.html" class="btn-cancel">
+                <i class="fa-solid fa-arrow-left" style="margin-right:8px"></i> Go Back
+            </a>
+        </div>
+
+        <div class="countdown-msg" id="countdownMsg">
+            Redirecting to login in <span id="countNum">3</span>s...
+        </div>
+
+    </div>
+</div>
+
+<script>
+function confirmLogout(){
+    // Clear session
+    sessionStorage.removeItem("hizauto_logged_in");
+
+    // Show countdown
+    const msg = document.getElementById("countdownMsg");
+    const num = document.getElementById("countNum");
+    msg.style.display = "block";
+
+    // Disable buttons
+    document.querySelector(".btn-confirm").disabled = true;
+    document.querySelector(".btn-confirm").style.opacity = "0.5";
+
+    let count = 3;
+    const timer = setInterval(()=>{
+        count--;
+        num.textContent = count;
+        if(count <= 0){
+            clearInterval(timer);
+            window.location.href = "login.html";
+        }
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
