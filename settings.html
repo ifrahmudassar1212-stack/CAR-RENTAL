@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Settings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif;}
+body{background:#111;color:#fff;}
+
+.navbar{
+    width:100%;background:#000;padding:18px 40px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid #ff7b00;flex-wrap:wrap;gap:10px;
+}
+.logo{font-size:28px;font-weight:700;text-decoration:none;color:#fff;}
+.logo span{color:#ff7b00;}
+.nav-links{display:flex;list-style:none;gap:22px;align-items:center;flex-wrap:wrap;}
+.nav-links a{text-decoration:none;color:#ddd;transition:0.3s;font-size:14px;}
+.nav-links a:hover,.nav-links a.active{color:#ff7b00;}
+.nav-links .logout-link a{color:#e74c3c;}
+.nav-links .logout-link a:hover{color:#ff6b6b;}
+
+.container{width:100%;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+.settings-card{background:#1b1b1b;padding:30px;border-radius:12px;border:1px solid #333;}
+.settings-card h2{margin-bottom:25px;color:#ff7b00;}
+.input-box{margin-bottom:18px;}
+.input-box label{display:block;margin-bottom:8px;font-size:14px;color:#ccc;}
+.input-box input{width:100%;padding:14px;background:#222;border:none;border-radius:8px;color:#fff;outline:none;transition:0.3s;}
+.input-box input:focus{border:1px solid #ff7b00;}
+.save-btn{width:100%;padding:14px;background:#ff7b00;border:none;border-radius:8px;color:#fff;font-size:16px;cursor:pointer;transition:0.3s;}
+.save-btn:hover{background:#e66d00;}
+.success-msg{margin-top:15px;padding:12px;background:#1e4a2c;border:1px solid #27ae60;border-radius:8px;color:#27ae60;font-size:14px;display:none;}
+.saved-info{margin-top:20px;background:#222;padding:15px;border-radius:8px;display:none;}
+.saved-info p{font-size:14px;color:#ccc;margin-bottom:6px;}
+.saved-info span{color:#ff7b00;font-weight:600;}
+
+@media(max-width:900px){
+    .container{grid-template-columns:1fr;padding:20px;}
+    .navbar{justify-content:center;gap:15px;padding:20px;}
+    .nav-links{flex-wrap:wrap;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html" class="active">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <!-- ADMIN SETTINGS -->
+    <div class="settings-card">
+        <h2><i class="fa-solid fa-user-gear"></i> Admin Settings</h2>
+
+        <div class="input-box">
+            <label>Admin Email</label>
+            <input type="email" id="adminEmail" placeholder="Enter admin email">
+        </div>
+        <div class="input-box">
+            <label>Current Password</label>
+            <input type="password" id="currentPassword" placeholder="Enter current password">
+        </div>
+        <div class="input-box">
+            <label>New Password</label>
+            <input type="password" id="newPassword" placeholder="Enter new password">
+        </div>
+        <div class="input-box">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmNewPassword" placeholder="Repeat new password">
+        </div>
+        <button class="save-btn" onclick="saveProfile()">
+            <i class="fa-solid fa-floppy-disk"></i> Save Profile
+        </button>
+        <div class="success-msg" id="adminSuccess">
+            <i class="fa-solid fa-check"></i> Profile saved successfully!
+        </div>
+        <div class="saved-info" id="adminSaved">
+            <p>Email: <span id="savedEmail">—</span></p>
+            <p>Password: <span>••••••••</span></p>
+        </div>
+    </div>
+
+    <!-- WEBSITE SETTINGS -->
+    <div class="settings-card">
+        <h2><i class="fa-solid fa-gear"></i> Website Settings</h2>
+
+        <div class="input-box">
+            <label>Contact Email</label>
+            <input type="email" id="contactEmail" placeholder="Enter contact email">
+        </div>
+        <div class="input-box">
+            <label>Contact Phone</label>
+            <input type="text" id="contactPhone" placeholder="Enter contact phone">
+        </div>
+        <div class="input-box">
+            <label>Business Name</label>
+            <input type="text" id="businessName" placeholder="Enter business name">
+        </div>
+        <div class="input-box">
+            <label>Business Address</label>
+            <input type="text" id="businessAddress" placeholder="Enter address">
+        </div>
+        <button class="save-btn" onclick="saveWebsiteSettings()">
+            <i class="fa-solid fa-floppy-disk"></i> Save Settings
+        </button>
+        <div class="success-msg" id="webSuccess">
+            <i class="fa-solid fa-check"></i> Website settings saved!
+        </div>
+        <div class="saved-info" id="webSaved">
+            <p>Contact Email: <span id="savedContactEmail">—</span></p>
+            <p>Phone: <span id="savedPhone">—</span></p>
+            <p>Business: <span id="savedBusiness">—</span></p>
+            <p>Address: <span id="savedAddress">—</span></p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function saveProfile(){
+    const email = document.getElementById("adminEmail").value;
+    const current = document.getElementById("currentPassword").value;
+    const newPass = document.getElementById("newPassword").value;
+    const confirm = document.getElementById("confirmNewPassword").value;
+
+    if(!email||!current||!newPass||!confirm){ alert("Please fill all fields"); return; }
+    if(newPass !== confirm){ alert("New passwords do not match"); return; }
+
+    document.getElementById("savedEmail").textContent = email;
+    document.getElementById("adminSaved").style.display = "block";
+    document.getElementById("adminSuccess").style.display = "block";
+
+    setTimeout(()=>document.getElementById("adminSuccess").style.display="none", 3000);
+}
+
+function saveWebsiteSettings(){
+    const email = document.getElementById("contactEmail").value;
+    const phone = document.getElementById("contactPhone").value;
+    const name = document.getElementById("businessName").value;
+    const address = document.getElementById("businessAddress").value;
+
+    if(!email||!phone){ alert("Please fill required fields (Email & Phone)"); return; }
+
+    document.getElementById("savedContactEmail").textContent = email;
+    document.getElementById("savedPhone").textContent = phone;
+    document.getElementById("savedBusiness").textContent = name||"—";
+    document.getElementById("savedAddress").textContent = address||"—";
+    document.getElementById("webSaved").style.display = "block";
+    document.getElementById("webSuccess").style.display = "block";
+
+    setTimeout(()=>document.getElementById("webSuccess").style.display="none", 3000);
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

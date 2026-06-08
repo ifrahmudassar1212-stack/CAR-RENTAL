@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Manage Cars</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background:#111;color:#fff;}
+
+.navbar{
+    width:100%;background:#000;padding:18px 40px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid #ff7b00;flex-wrap:wrap;gap:10px;
+}
+.logo{font-size:28px;font-weight:700;text-decoration:none;color:#fff;}
+.logo span{color:#ff7b00;}
+.nav-links{display:flex;list-style:none;gap:22px;align-items:center;flex-wrap:wrap;}
+.nav-links a{text-decoration:none;color:#ddd;transition:0.3s;font-size:14px;}
+.nav-links a:hover,.nav-links a.active{color:#ff7b00;}
+.nav-links .logout-link a{color:#e74c3c;}
+.nav-links .logout-link a:hover{color:#ff6b6b;}
+
+.container{padding:35px 40px;}
+.top-section{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;flex-wrap:wrap;gap:15px;}
+.top-section h1{font-size:32px;}
+.add-btn{background:#ff7b00;border:none;padding:12px 22px;color:#fff;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600;transition:0.3s;}
+.add-btn:hover{background:#e66d00;}
+
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;}
+.car-card{background:#1b1b1b;border-radius:20px;overflow:hidden;transition:0.3s;border:1px solid #222;}
+.car-card:hover{transform:translateY(-8px);border-color:#ff7b00;}
+.car-card img{width:100%;height:220px;object-fit:cover;}
+.car-content{padding:20px;}
+.car-content h3{font-size:20px;margin-bottom:6px;}
+.car-meta{color:#888;font-size:13px;margin-bottom:10px;}
+.price{color:#ff7b00;font-size:20px;font-weight:600;margin-bottom:15px;}
+.btn-group{display:flex;gap:10px;}
+.edit-btn,.delete-btn{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;color:#fff;font-size:14px;transition:0.3s;}
+.edit-btn{background:#2980b9;}
+.edit-btn:hover{background:#2471a3;}
+.delete-btn{background:#c0392b;}
+.delete-btn:hover{background:#a93226;}
+
+.modal{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,0.75);justify-content:center;align-items:center;z-index:999;
+}
+.modal-content{
+    background:#1b1b1b;padding:30px;border-radius:20px;
+    width:90%;max-width:500px;border:1px solid #ff7b00;
+}
+.modal-content h2{margin-bottom:20px;color:#ff7b00;text-align:center;}
+.input-box{margin-bottom:15px;}
+.input-box label{display:block;margin-bottom:6px;font-size:13px;color:#ccc;}
+.input-box input{width:100%;padding:13px;border:none;border-radius:8px;background:#222;color:#fff;outline:none;}
+.input-box input:focus{border:1px solid #ff7b00;}
+.save-btn{width:100%;padding:14px;background:#ff7b00;border:none;border-radius:8px;color:#fff;font-size:15px;cursor:pointer;transition:0.3s;}
+.save-btn:hover{background:#e66d00;}
+
+@media(max-width:768px){
+    .navbar{justify-content:center;gap:15px;padding:20px;}
+    .nav-links{flex-wrap:wrap;justify-content:center;}
+    .container{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html" class="active">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="top-section">
+        <h1>Manage Cars</h1>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Add Car
+        </button>
+    </div>
+
+    <div class="cars-grid" id="carsGrid">
+
+        <div class="car-card">
+            <img src="https://cache3.pakwheels.com/system/car_generation_pictures/9124/original/Cover.jpg?1768566273" alt="Peugeot 2008">
+            <div class="car-content">
+                <h3>Peugeot 2008</h3>
+                <p class="car-meta">SUV · Automatic</p>
+                <p class="price">$150 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://cache3.pakwheels.com/system/car_generation_pictures/8778/original/Cover.jpg?1746017676" alt="MG Cyberster">
+            <div class="car-content">
+                <h3>MG Cyberster</h3>
+                <p class="car-meta">Sports · Automatic</p>
+                <p class="price">$180 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://cache3.pakwheels.com/system/car_generation_pictures/4394/original/Audi_A5_2017.jpg?1768563196" alt="Audi A5">
+            <div class="car-content">
+                <h3>Audi A5</h3>
+                <p class="car-meta">Sedan · Automatic</p>
+                <p class="price">$200 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://cache2.pakwheels.com/system/car_generation_pictures/10345/original/Cover_%2818%29.jpg?1767275410">
+            <div class="car-content">
+                <h3>Honda Civic</h3>
+                <p class="car-meta">Sedan · Automatic</p>
+                <p class="price">$120 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+        <div class="car-card">
+            <img src="https://cache4.pakwheels.com/system/car_generation_pictures/16873/original/Cover.jpg?1770901899">
+            <div class="car-content">
+                <h3>Jaecoo J5</h3>
+                <p class="car-meta">Sedan · Automatic</p>
+                <p class="price">$130/ Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="car-card">
+            <img src="https://cache1.pakwheels.com/system/car_generation_pictures/5361/original/Corolla-X-Cars-Cropped-Pictures-for-Website.jpg?1606903674">
+            <div class="car-content">
+                <h3>Toyota Corolla</h3>
+                <p class="car-meta">Sedan · Automatic</p>
+                <p class="price">$110 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://cache4.pakwheels.com/system/car_generation_pictures/8796/original/Cover.jpg?1746424162">
+            <div class="car-content">
+                <h3>Haval H6</h3>
+                <p class="car-meta">SUV · Automatic</p>
+                <p class="price">$170 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="car-card">
+            <img src="https://cache3.pakwheels.com/system/car_generation_pictures/16719/original/Cover.jpg?1768986980">
+            <div class="car-content">
+                <h3>Toyota Land Cruiser</h3>
+                <p class="car-meta">SUV · Automatic</p>
+                <p class="price">$250 / Day</p>
+                <div class="btn-group">
+                    <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal" id="carModal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Add New Car</h2>
+        <div class="input-box"><label>Car Name</label><input type="text" id="carName" placeholder="e.g. BMW M4"></div>
+        <div class="input-box"><label>Category</label><input type="text" id="carMeta" placeholder="e.g. Sedan · Automatic"></div>
+        <div class="input-box"><label>Price Per Day ($)</label><input type="number" id="carPrice" placeholder="e.g. 150"></div>
+        <div class="input-box"><label>Image URL</label><input type="text" id="carImage" placeholder="https://..."></div>
+        <button class="save-btn" onclick="saveCar()">Save Car</button>
+    </div>
+</div>
+
+<script>
+let editingCard = null;
+
+function openModal(){
+    document.getElementById("modalTitle").textContent = "Add New Car";
+    editingCard = null; clearFields();
+    document.getElementById("carModal").style.display = "flex";
+}
+
+window.onclick = function(e){
+    if(e.target === document.getElementById("carModal"))
+        document.getElementById("carModal").style.display = "none";
+}
+
+function saveCar(){
+    const name = document.getElementById("carName").value;
+    const meta = document.getElementById("carMeta").value;
+    const price = document.getElementById("carPrice").value;
+    const image = document.getElementById("carImage").value;
+
+    if(!name||!price||!image){ alert("Fill all required fields"); return; }
+
+    if(editingCard){
+        editingCard.querySelector("img").src = image;
+        editingCard.querySelector("h3").textContent = name;
+        editingCard.querySelector(".car-meta").textContent = meta;
+        editingCard.querySelector(".price").textContent = `$${price} / Day`;
+        editingCard = null;
+    } else {
+        const card = document.createElement("div");
+        card.className = "car-card";
+        card.innerHTML = `
+        <img src="${image}" alt="${name}">
+        <div class="car-content">
+            <h3>${name}</h3>
+            <p class="car-meta">${meta}</p>
+            <p class="price">$${price} / Day</p>
+            <div class="btn-group">
+                <button class="edit-btn" onclick="editCar(this)">Edit</button>
+                <button class="delete-btn" onclick="deleteCar(this)">Delete</button>
+            </div>
+        </div>`;
+        document.getElementById("carsGrid").appendChild(card);
+    }
+    clearFields();
+    document.getElementById("carModal").style.display = "none";
+}
+
+function editCar(btn){
+    editingCard = btn.closest(".car-card");
+    document.getElementById("modalTitle").textContent = "Edit Car";
+    document.getElementById("carImage").value = editingCard.querySelector("img").src;
+    document.getElementById("carName").value = editingCard.querySelector("h3").textContent;
+    document.getElementById("carMeta").value = editingCard.querySelector(".car-meta").textContent;
+    document.getElementById("carPrice").value = editingCard.querySelector(".price").textContent.replace("$","").replace(" / Day","");
+    document.getElementById("carModal").style.display = "flex";
+}
+
+function deleteCar(btn){
+    if(confirm("Delete this car?")) btn.closest(".car-card").remove();
+}
+
+function clearFields(){
+    ["carName","carMeta","carPrice","carImage"].forEach(id=>document.getElementById(id).value="");
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

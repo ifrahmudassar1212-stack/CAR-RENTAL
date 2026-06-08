@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Rental History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html" class="active">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="top-bar">
+        <h1>Rental History</h1>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Add History
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>History ID</th>
+                    <th>Car ID</th>
+                    <th>Rental ID</th>
+                    <th>Payment ID</th>
+                    <th>Time Rented</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Database rows load here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="historyModal">
+    <div class="modal-content">
+        <h2>Add Rental History</h2>
+        <div class="input-box"><input type="text" id="historyId" placeholder="History ID"></div>
+        <div class="input-box"><input type="text" id="carId" placeholder="Car ID"></div>
+        <div class="input-box"><input type="text" id="rentalId" placeholder="Rental ID"></div>
+        <div class="input-box"><input type="text" id="paymentId" placeholder="Payment ID"></div>
+        <div class="input-box"><input type="text" id="timeRented" placeholder="Time Rented (e.g. 5 Days)"></div>
+        <div class="input-box">
+            <select id="statusSelect">
+                <option value="Withheld">Select Status</option>
+                <option value="Completed">Completed</option>
+                <option value="Pending">Pending</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+        <button class="save-btn" onclick="saveHistory()">Save History</button>
+    </div>
+</div>
+
+<script>
+const modal = document.getElementById("historyModal");
+let editingRow = null;
+
+// LOAD tracking metrics dynamically from database log
+function loadHistory() {
+    fetch("get_history.php")
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.querySelector("#historyTable tbody");
+        tbody.innerHTML = "";
+        data.forEach(h => {
+            if(!h.history_id || h.history_id.trim() === "") return; // Skip broken formatting markers
+
+            const statusClass = h.status.toLowerCase();
+            tbody.innerHTML += `
+            <tr>
+                <td>${h.history_id}</td>
+                <td>${h.car_id}</td>
+                <td>${h.rental_id}</td>
+                <td>${h.payment_id}</td>
+                <td>${h.time_rented}</td>
+                <td><span class="status ${statusClass}">${h.status}</span></td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteHistory('${h.history_id}', this)">Delete</button>
+                </td>
+            </tr>`;
+        });
+    })
+    .catch(err => console.error("Error reading log history array:", err));
+}
+
+window.onload = loadHistory;
+
+function openModal(){
+    modal.querySelector("h2").textContent = "Add Rental History";
+    document.getElementById("historyId").disabled = false;
+    editingRow = null;
+    clearFields();
+    modal.style.display = "flex";
+}
+
+window.onclick = function(e){ if(e.target == modal) modal.style.display = "none"; }
+
+function saveHistory(){
+    const hId    = document.getElementById("historyId").value.trim();
+    const cId    = document.getElementById("carId").value.trim();
+    const rId    = document.getElementById("rentalId").value.trim();
+    const pId    = document.getElementById("paymentId").value.trim();
+    const time   = document.getElementById("timeRented").value.trim();
+    const status = document.getElementById("statusSelect").value;
+
+    if(!hId || !cId || !rId || !pId || !time || !status || status === "Withheld"){
+        alert("Please complete all history fields."); return;
+    }
+
+    const formData = new FormData();
+    formData.append("history_id",  hId);
+    formData.append("car_id",      cId);
+    formData.append("rental_id",   rId);
+    formData.append("payment_id",  pId);
+    formData.append("time_rented", time);
+    formData.append("status",      status);
+
+    const endpoint = editingRow ? "update_history.php" : "add_history.php";
+
+    fetch(endpoint, { method: "POST", body: formData })
+    .then(res => res.text())
+    .then(response => {
+        if(response.trim() === "success"){
+            alert("Rental History Saved Successfully!");
+            modal.style.display = "none";
+            loadHistory();
+        } else {
+            alert("Database Error: " + response);
+        }
+    });
+}
+
+function deleteHistory(id, button){
+    if(confirm("Permanently drop this log entry from tracking records?")){
+        const formData = new FormData();
+        formData.append("history_id", id);
+        fetch("delete_history.php", { method: "POST", body: formData })
+        .then(res => res.text())
+        .then(response => {
+            if(response.trim() === "success"){
+                button.parentElement.parentElement.remove();
+            } else {
+                alert("Could not update index: " + response);
+            }
+        });
+    }
+}
+
+function editRow(button){
+    editingRow = button.parentElement.parentElement;
+    modal.querySelector("h2").textContent = "Edit Rental History";
+    
+    document.getElementById("historyId").value    = editingRow.cells[0].innerText;
+    document.getElementById("historyId").disabled = true; // Protect unique primary key data
+    document.getElementById("carId").value        = editingRow.cells[1].innerText;
+    document.getElementById("rentalId").value     = editingRow.cells[2].innerText;
+    document.getElementById("paymentId").value    = editingRow.cells[3].innerText;
+    document.getElementById("timeRented").value   = editingRow.cells[4].innerText;
+    document.getElementById("statusSelect").value = editingRow.cells[5].innerText.trim();
+    
+    modal.style.display = "flex";
+}
+
+function clearFields(){
+    ["historyId","carId","rentalId","paymentId","timeRented"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("statusSelect").value = "Withheld";
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

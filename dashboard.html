@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HizAuto Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{background:#111;color:#fff;overflow-x:hidden;}
+
+.navbar{
+width:100%;
+padding:18px 50px;
+background:#000;
+border-bottom:2px solid #ff7b00;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:fixed;
+top:0;
+left:0;
+z-index:1000;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.logo{font-size:30px;font-weight:700;text-decoration:none;color:#fff;}
+.logo span{color:#ff7b00;}
+
+.nav-links{display:flex;gap:22px;list-style:none;align-items:center;flex-wrap:wrap;}
+
+.nav-links a{text-decoration:none;color:#ddd;transition:0.3s;font-size:14px;}
+.nav-links a:hover,.nav-links a.active{color:#ff7b00;}
+
+.nav-links .logout-link a{color:#e74c3c;}
+.nav-links .logout-link a:hover{color:#ff6b6b;}
+
+/* HERO */
+.hero{
+min-height:100vh;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:120px 60px 60px;
+gap:40px;
+flex-wrap:wrap;
+}
+
+.hero-left{flex:1;min-width:300px;}
+
+.hero-left h1{font-size:62px;line-height:1.1;margin-bottom:20px;}
+.hero-left h1 span{color:#ff7b00;}
+
+.hero-left p{color:#bbb;font-size:17px;line-height:1.7;margin-bottom:35px;max-width:580px;}
+
+.hero-buttons{display:flex;gap:20px;flex-wrap:wrap;}
+
+.btn{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:pointer;transition:0.3s;font-weight:600;}
+
+.btn-orange{background:#ff7b00;color:#fff;}
+.btn-orange:hover{background:#e66d00;transform:translateY(-3px);}
+
+.btn-dark{background:#222;color:#fff;border:1px solid #444;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-dark:hover{background:#333;}
+
+.hero-right{flex:1;display:flex;justify-content:center;align-items:center;position:relative;min-width:300px;}
+
+.circle{
+width:420px;height:420px;
+background:radial-gradient(circle,rgba(255,123,0,0.9),rgba(255,123,0,0.2));
+border-radius:50%;
+position:absolute;
+animation:float 4s ease-in-out infinite;
+filter:blur(10px);
+}
+
+@keyframes float{
+0%{transform:translateY(0);}
+50%{transform:translateY(-15px);}
+100%{transform:translateY(0);}
+}
+
+.graph-card{
+position:relative;
+width:100%;
+max-width:420px;
+background:rgba(25,25,25,0.95);
+padding:25px;
+border-radius:20px;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,123,0,0.2);
+box-shadow:0 0 25px rgba(255,123,0,0.15);
+z-index:2;
+}
+
+.graph-card h3{margin-bottom:20px;color:#ff7b00;}
+
+.graph{
+display:flex;
+align-items:flex-end;
+justify-content:space-between;
+height:220px;
+gap:15px;
+}
+
+.bar{
+width:45px;
+background:#ff7b00;
+border-radius:10px 10px 0 0;
+position:relative;
+animation:grow 2s ease;
+}
+
+.bar span{
+position:absolute;
+bottom:-28px;
+left:50%;
+transform:translateX(-50%);
+font-size:13px;
+color:#aaa;
+}
+
+.bar1{height:80px;}
+.bar2{height:140px;}
+.bar3{height:190px;}
+.bar4{height:120px;}
+.bar5{height:210px;}
+
+@keyframes grow{from{height:0;}}
+
+/* CARS */
+.cars-section{padding:40px 60px;}
+
+.section-title{text-align:center;margin-bottom:50px;}
+.section-title h2{font-size:42px;}
+.section-title span{color:#ff7b00;}
+
+.car-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+}
+
+.car-card{
+background:#1a1a1a;
+border-radius:20px;
+overflow:hidden;
+transition:0.4s;
+border:1px solid #222;
+}
+
+.car-card:hover{
+transform:translateY(-10px);
+border-color:#ff7b00;
+}
+
+.car-card img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.car-content{padding:20px;}
+
+.car-content h3{margin-bottom:10px;font-size:22px;}
+.car-content p{color:#aaa;margin-bottom:15px;}
+
+.car-info{
+display:flex;
+justify-content:space-between;
+margin-bottom:20px;
+color:#ddd;
+}
+
+.book-btn{
+width:100%;
+padding:12px;
+background:#ff7b00;
+border:none;
+border-radius:10px;
+color:#fff;
+font-size:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.book-btn:hover{background:#e66d00;}
+
+.footer{
+padding:25px;
+text-align:center;
+background:#000;
+border-top:2px solid #ff7b00;
+margin-top:50px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+
+    <ul class="nav-links">
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+
+        <!-- ✅ BACK BUTTON -->
+        <li>
+            <a href="loginweb.html">
+                <i class="fa-solid fa-arrow-left"></i> Back to Website
+            </a>
+        </li>
+
+        <!-- LOGOUT -->
+        <li class="logout-link">
+            <a href="login.html">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-left">
+        <h1>HIZ Car Rental <span>Dashboard</span></h1>
+        <p>Manage luxury rentals, bookings, payments and customers with the modern HizAuto dashboard.</p>
+
+        <div class="hero-buttons">
+            <a href="manage-cars.html" class="btn btn-orange">Explore Cars</a>
+            <a href="bookings.html" class="btn btn-dark">View Bookings</a>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <div class="circle"></div>
+
+        <div class="graph-card">
+            <h3>Monthly Rentals</h3>
+            <div class="graph">
+                <div class="bar bar1"><span>Jan</span></div>
+                <div class="bar bar2"><span>Feb</span></div>
+                <div class="bar bar3"><span>Mar</span></div>
+                <div class="bar bar4"><span>Apr</span></div>
+                <div class="bar bar5"><span>May</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+© 2026 HizAuto — Car Rental Dashboard
+</footer>
+
+</body>
+</html>
