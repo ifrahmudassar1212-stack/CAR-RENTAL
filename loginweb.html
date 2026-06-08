@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HIZAUTO Login</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#111;
+  overflow:hidden;
+}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 40px;
+  background:#000;
+}
+
+.logo{color:#fff;font-weight:700;font-size:20px;}
+.logo span{color:#ff7b00;}
+
+.nav-links{
+  display:flex;
+  gap:25px;
+  list-style:none;
+}
+
+.nav-links a{
+  color:#ccc;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.nav-links a:hover{color:#ff7b00;}
+
+/* MAIN */
+.login-wrapper{
+  display:flex;
+  height:100vh;
+  padding-top:60px;
+}
+
+/* LEFT */
+.form-section{
+  width:45%;
+  padding:50px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.form-section h1{color:#fff;margin-bottom:10px;}
+.form-section p{color:#888;margin-bottom:25px;}
+
+.input-box{
+  display:flex;
+  align-items:center;
+  background:#222;
+  padding:12px;
+  margin-bottom:15px;
+  border-radius:6px;
+}
+
+.input-box i{
+  color:#ff7b00;
+  margin-right:10px;
+}
+
+.input-box input{
+  background:none;
+  border:none;
+  outline:none;
+  color:#fff;
+  width:100%;
+}
+
+.main-btn{
+  width:100%;
+  padding:14px;
+  background:#ff7b00;
+  border:none;
+  border-radius:6px;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.main-btn:hover{background:#e06e00;}
+
+.register-link{
+  margin-top:15px;
+  color:#777;
+  font-size:13px;
+}
+
+/* RIGHT */
+.image-section{
+  flex:1;
+}
+
+.image-section img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">HIZ<span>AUTO</span></div>
+  <ul class="nav-links">
+    <li><a href="loginweb.html">Login</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="cars.html">Cars</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="booking.html">Booking</a></li>
+  </ul>
+</nav>
+
+<!-- CONTENT -->
+<div class="login-wrapper">
+
+  <!-- FORM -->
+  <div class="form-section">
+    <form id="loginForm">
+      <h1>Welcome Back</h1>
+      <p>Login to continue your journey with HIZAUTO</p>
+
+      <div class="input-box">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" placeholder="Enter Email" required>
+      </div>
+
+      <div class="input-box">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" placeholder="Enter Password" required>
+      </div>
+ <button type="submit" class="main-btn">Login</button>
+      <div class="register-link">
+          Don't have an account? <a href="register.html">Register</a>
+        </div>
+      </form>
+    </div>
+
+  <!-- IMAGE -->
+  <div class="image-section">
+    <img src="https://images.pexels.com/photos/12681060/pexels-photo-12681060.jpeg">
+  </div>
+
+</div>
+
+<!-- ✅ FIX: NO '?' + REDIRECT -->
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault(); // stops ? in URL
+
+    // redirect to home page
+    window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>

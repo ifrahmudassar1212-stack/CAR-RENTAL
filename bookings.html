@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Bookings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html" class="active">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="top-bar">
+        <h1>Rental Bookings</h1>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Add Booking
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table id="rentalTable">
+            <thead>
+                <tr>
+                    <th>Rental ID</th>
+                    <th>Customer ID</th>
+                    <th>Car ID</th>
+                    <th>Payment ID</th>
+                    <th>Location</th>
+                    <th>Date Rent</th>
+                    <th>Date Return</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamic Data Loads Here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="rentalModal">
+    <div class="modal-content">
+        <h2>Add Booking</h2>
+        <div class="input-box"><input type="text" id="rentalId" placeholder="Rental ID"></div>
+        <div class="input-box"><input type="text" id="customerId" placeholder="Customer ID"></div>
+        <div class="input-box"><input type="text" id="carId" placeholder="Car ID"></div>
+        <div class="input-box"><input type="text" id="paymentId" placeholder="Payment ID"></div>
+        <div class="input-box"><input type="text" id="location" placeholder="Location"></div>
+        <div class="input-box"><label>Date Rent</label><input type="date" id="dateRent"></div>
+        <div class="input-box"><label>Date Return</label><input type="date" id="dateReturn"></div>
+        <button class="save-btn" onclick="saveRental()">Save Booking</button>
+    </div>
+</div>
+
+<script>
+const modal = document.getElementById("rentalModal");
+let editingRow = null;
+
+// LOAD rental bookings from database table
+function loadBookings() {
+    fetch("get_bookings.php")
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.querySelector("#rentalTable tbody");
+        tbody.innerHTML = "";
+        data.forEach(b => {
+            // Filter out empty placeholder data records
+            if(!b.rental_id || b.rental_id.trim() === "") return;
+
+            tbody.innerHTML += `
+            <tr>
+                <td>${b.rental_id}</td>
+                <td>${b.customer_id}</td>
+                <td>${b.car_id}</td>
+                <td>${b.payment_id}</td>
+                <td>${b.location}</td>
+                <td>${b.date_rent}</td>
+                <td>${b.date_return}</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteBooking('${b.rental_id}', this)">Delete</button>
+                </td>
+            </tr>`;
+        });
+    })
+    .catch(err => console.error("Error loading JSON dataset:", err));
+}
+
+window.onload = loadBookings;
+
+function openModal(){
+    modal.querySelector("h2").textContent = "Add Booking";
+    document.getElementById("rentalId").disabled = false;
+    editingRow = null;
+    clearFields();
+    modal.style.display = "flex";
+}
+
+window.onclick = function(e){ if(e.target == modal) modal.style.display = "none"; }
+
+function saveRental(){
+    const rId     = document.getElementById("rentalId").value.trim();
+    const cId     = document.getElementById("customerId").value.trim();
+    const carId   = document.getElementById("carId").value.trim();
+    const pId     = document.getElementById("paymentId").value.trim();
+    const loc     = document.getElementById("location").value.trim();
+    const dRent   = document.getElementById("dateRent").value;
+    const dReturn = document.getElementById("dateReturn").value;
+
+    if(!rId || !cId || !carId || !pId || !loc || !dRent || !dReturn){
+        alert("Please fill all booking input fields."); 
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("rental_id",   rId);
+    formData.append("customer_id", cId);
+    formData.append("car_id",      carId);
+    formData.append("payment_id",  pId);
+    formData.append("location",    loc);
+    formData.append("date_rent",   dRent);
+    formData.append("date_return", dReturn);
+
+    // Switch endpoints dynamically depending on transaction type
+    const endpoint = editingRow ? "update_booking.php" : "add_booking.php";
+
+    fetch(endpoint, { method: "POST", body: formData })
+    .then(res => res.text())
+    .then(response => {
+        if(response.trim() === "success"){
+            alert("Rental Booking Saved Successfully!");
+            modal.style.display = "none";
+            loadBookings();
+        } else {
+            alert("Server warning: " + response);
+        }
+    });
+}
+
+function deleteBooking(id, button){
+    if(confirm("Are you sure you want to delete this booking entry?")){
+        const formData = new FormData();
+        formData.append("rental_id", id);
+        fetch("delete_booking.php", { method: "POST", body: formData })
+        .then(res => res.text())
+        .then(response => {
+            if(response.trim() === "success"){
+                button.parentElement.parentElement.remove();
+            } else {
+                alert("Could not delete record: " + response);
+            }
+        });
+    }
+}
+
+function editRow(button){
+    editingRow = button.parentElement.parentElement;
+    modal.querySelector("h2").textContent = "Edit Booking";
+    
+    // Map text value row metrics directly inside corresponding entry boxes
+    document.getElementById("rentalId").value    = editingRow.cells[0].innerText;
+    document.getElementById("rentalId").disabled = true; // Protect key column integrity
+    document.getElementById("customerId").value  = editingRow.cells[1].innerText;
+    document.getElementById("carId").value       = editingRow.cells[2].innerText;
+    document.getElementById("paymentId").value   = editingRow.cells[3].innerText;
+    document.getElementById("location").value    = editingRow.cells[4].innerText;
+    document.getElementById("dateRent").value    = editingRow.cells[5].innerText;
+    document.getElementById("dateReturn").value  = editingRow.cells[6].innerText;
+    
+    modal.style.display = "flex";
+}
+
+function clearFields(){
+    ["rentalId","customerId","carId","paymentId","location","dateRent","dateReturn"]
+    .forEach(id => document.getElementById(id).value = "");
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

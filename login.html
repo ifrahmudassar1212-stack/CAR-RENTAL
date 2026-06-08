@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Login</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html,body{height:100%;overflow:hidden;background:#111;color:#fff;}
+
+/* NAVBAR */
+.navbar{
+  width:100%;padding:18px 40px;background:#000;
+  border-bottom:2px solid #ff7b00;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
+  position:fixed;top:0;left:0;z-index:100;
+}
+.logo{font-size:26px;font-weight:700;color:#fff;text-decoration:none;}
+.logo span{color:#ff7b00;}
+
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+.nav-links a{color:#ccc;text-decoration:none;font-size:14px;font-weight:400;transition:color 0.2s;}
+.nav-links a:hover{color:#ff7b00;}
+.nav-links a.active{color:#ff7b00;}
+.nav-logout{color:#ff7b00 !important;font-weight:500;display:flex;align-items:center;gap:6px;}
+.nav-logout:hover{color:#ffaa55 !important;}
+
+/* SPLIT LAYOUT */
+.page-wrap{
+  display:grid;grid-template-columns:45% 55%;
+  height:100vh;padding-top:68px;
+}
+
+/* LEFT PANEL */
+.left-panel{
+  background:#1c1c1c;display:flex;
+  flex-direction:column;justify-content:center;
+  padding:0 70px 40px 70px;
+}
+.left-panel h1{font-size:34px;font-weight:700;margin-bottom:8px;color:#fff;}
+.left-panel .subtitle{font-size:14px;color:#888;margin-bottom:38px;font-weight:400;}
+
+/* Input fields */
+.input-group{position:relative;margin-bottom:16px;}
+.input-group .icon{
+  position:absolute;left:18px;top:50%;
+  transform:translateY(-50%);color:#ff7b00;font-size:14px;
+  transition:color 0.2s;
+}
+.input-group input{
+  width:100%;padding:15px 18px 15px 46px;
+  background:#2a2a2a;border:1px solid transparent;
+  border-radius:10px;color:#ccc;font-size:14px;
+  font-family:'Poppins',sans-serif;outline:none;transition:all 0.2s;
+}
+.input-group input::placeholder{color:#666;}
+.input-group input:focus{background:#333;border-color:#ff7b00;}
+.input-group input.input-error{border-color:#e74c3c;background:#2e1a1a;color:#e74c3c;}
+.input-group.group-error .icon{color:#e74c3c;}
+.input-group input.input-error::placeholder{color:#a94040;}
+
+/* Shake animation */
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}
+  60%{transform:translateX(-5px);}
+  80%{transform:translateX(5px);}
+}
+.shake{animation:shake 0.45s ease;}
+
+/* Error button state */
+.btn-login.btn-error{
+  background:#c0392b;
+  animation:shake 0.45s ease;
+}
+
+/* Forgot password */
+.forgot-row{
+  text-align:right;margin-top:-6px;margin-bottom:22px;
+}
+.forgot-row a{
+  font-size:13px;color:#888;text-decoration:none;transition:color 0.2s;
+}
+.forgot-row a:hover{color:#ff7b00;}
+
+/* Login button */
+.btn-login{
+  width:100%;padding:15px;
+  background:#ff7b00;border:none;border-radius:10px;
+  color:#fff;font-size:15px;font-weight:600;
+  font-family:'Poppins',sans-serif;cursor:pointer;
+  transition:background 0.25s,transform 0.15s;
+}
+.btn-login:hover{background:#e86e00;transform:translateY(-1px);}
+
+/* ERROR BOX */
+.error-msg{
+  display:none;
+  margin-bottom:20px;
+  padding:14px 16px;
+  background:#1e0a0a;
+  border:1px solid #c0392b;
+  border-left:4px solid #e74c3c;
+  border-radius:10px;
+}
+.error-msg .err-title{
+  font-size:13px;font-weight:600;color:#e74c3c;
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.error-msg .err-body{
+  font-size:13px;color:#bbb;line-height:1.8;
+}
+.error-msg .err-body span{color:#ff7b00;font-weight:600;}
+
+/* RIGHT PANEL */
+.right-panel{position:relative;overflow:hidden;}
+.right-panel img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+.right-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.1) 50%,rgba(0,0,0,0) 100%);
+}
+.right-text{position:absolute;bottom:48px;left:44px;right:44px;}
+.right-text h2{font-size:36px;font-weight:700;color:#fff;margin-bottom:8px;}
+.right-text p{font-size:15px;color:#ccc;font-weight:400;letter-spacing:0.3px;}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  html,body{overflow:auto;}
+  .page-wrap{grid-template-columns:1fr;height:auto;}
+  .right-panel{height:300px;}
+  .left-panel{padding:50px 36px;}
+  .left-panel h1{font-size:26px;}
+}
+@media(max-width:600px){
+  .navbar{padding:15px 20px;}
+  .nav-links{gap:16px;}
+  .nav-links a{font-size:12px;}
+  .left-panel{padding:36px 22px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+  <ul class="nav-links">
+    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+    <li><a href="cars.html">Cars</a></li>
+    <li><a href="bookings.html">Bookings</a></li>
+    <li><a href="customers.html">Customers</a></li>
+    <li><a href="payments.html">Payments</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="settings.html">Settings</a></li>
+    <li><a href="logout.html" class="nav-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+
+  <div class="left-panel">
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Login to continue your journey with HIZAUTO</p>
+
+    <!-- ERROR BOX -->
+    <div class="error-msg" id="errorMsg">
+      <div class="err-title">
+        <i class="fa-solid fa-circle-xmark"></i> Invalid Credentials
+      </div>
+      <div class="err-body">
+        Please use:<br>
+        Email &nbsp;&nbsp;: <span>hizauto@gmail.com</span><br>
+        Password: <span>admin123</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-envelope icon"></i>
+      <input type="email" id="emailInput" placeholder="Enter Email">
+    </div>
+
+    <div class="input-group">
+      <i class="fa-solid fa-lock icon"></i>
+      <input type="password" id="passInput" placeholder="Enter Password">
+    </div>
+
+    <div class="forgot-row">
+      <a href="forgot-password.html"><i class="fa-solid fa-key" style="margin-right:5px;font-size:12px;"></i>Forgot Password?</a>
+    </div>
+
+    <button class="btn-login" onclick="handleLogin()">Login</button>
+  </div>
+
+  <div class="right-panel">
+    <img
+      src="https://images.pexels.com/photos/12681060/pexels-photo-12681060.jpeg"
+      alt="Luxury car gear shift interior"
+    >
+    <div class="right-overlay"></div>
+    <div class="right-text">
+      <h2>Drive Your Dream Car</h2>
+      <p>Luxury &bull; Comfort &bull; Performance</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+if(sessionStorage.getItem("hizauto_logged_in") === "true"){
+  window.location.href = "dashboard.html";
+}
+
+function handleLogin(){
+  const email    = document.getElementById('emailInput').value.trim();
+  const pass     = document.getElementById('passInput').value.trim();
+  const err      = document.getElementById('errorMsg');
+  const emailInp = document.getElementById('emailInput');
+  const passInp  = document.getElementById('passInput');
+  const btn      = document.querySelector('.btn-login');
+
+  // Reset
+  err.style.display = 'none';
+  emailInp.classList.remove('input-error');
+  passInp.classList.remove('input-error');
+  emailInp.closest('.input-group').classList.remove('group-error');
+  passInp.closest('.input-group').classList.remove('group-error');
+  btn.classList.remove('btn-error');
+
+  function markError(inp){
+    inp.classList.add('input-error');
+    inp.closest('.input-group').classList.add('group-error');
+  }
+
+  if(!email || !pass){
+    err.querySelector('.err-title').innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Fields Required';
+    err.querySelector('.err-body').innerHTML  = 'Please enter both your email and password.';
+    err.style.display = 'block';
+    return;
+  }
+
+  if(email === 'hizauto@gmail.com' && pass === 'admin123'){
+    sessionStorage.setItem("hizauto_logged_in","true");
+    window.location.href = "dashboard.html";
+  } else {
+    err.querySelector('.err-title').innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Invalid Credentials';
+    err.querySelector('.err-body').innerHTML  =
+      'Please use:<br>Email &nbsp;&nbsp;: <span>hizauto@gmail.com</span><br>Password: <span>admin123</span>';
+    err.style.display = 'block';
+    passInp.value = '';
+  }
+}
+
+document.addEventListener('keydown', e => { if(e.key === 'Enter') handleLogin(); });
+</script>
+
+</body>
+</html>
