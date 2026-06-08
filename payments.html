@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Payments</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html">Customers</a></li>
+        <li><a href="payments.html" class="active">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="top-bar">
+        <h1>Payment Management</h1>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Add Payment
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table id="paymentTable">
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Customer ID</th>
+                    <th>Car ID</th>
+                    <th>Payment Mode</th>
+                    <th>Amount</th>
+                    <th>Payment Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamic Database Data Loads Here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <h2>Add Payment</h2>
+        <div class="input-box"><input type="text" id="paymentId" placeholder="Payment ID"></div>
+        <div class="input-box"><input type="text" id="customerId" placeholder="Customer ID"></div>
+        <div class="input-box"><input type="text" id="carId" placeholder="Car ID"></div>
+        <div class="input-box">
+            <select id="paymentMode">
+                <option value="">Select Payment Mode</option>
+                <option value="COD">Cash On Delivery</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+        </div>
+        <div class="input-box"><input type="text" id="amount" placeholder="Amount (e.g. 750.00)"></div>
+        <div class="input-box"><label>Payment Date</label><input type="date" id="paymentDate"></div>
+        <button class="save-btn" onclick="savePayment()">Save Payment</button>
+    </div>
+</div>
+
+<script>
+const modal = document.getElementById("paymentModal");
+const tableBody = document.querySelector("#paymentTable tbody");
+let editingRow = null;
+
+// FIX #1: Dynamically pull and render payment records from database
+function loadPayments() {
+    fetch("get_payments.php")
+    .then(res => res.json())
+    .then(data => {
+        tableBody.innerHTML = "";
+        data.forEach(p => {
+            if(!p.payment_id || p.payment_id.trim() === "") return; // Skip dummy entries
+
+            const modeClass = p.payment_mode === "COD" ? "cod" : "card";
+            tableBody.innerHTML += `
+            <tr>
+                <td>${p.payment_id}</td>
+                <td>${p.customer_id}</td>
+                <td>${p.car_id}</td>
+                <td><span class="mode ${modeClass}">${p.payment_mode}</span></td>
+                <td>$${p.amount}</td>
+                <td>${p.payment_date}</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deletePayment('${p.payment_id}', this)">Delete</button>
+                </td>
+            </tr>`;
+        });
+    })
+    .catch(err => console.error("Error connecting with payments dataset:", err));
+}
+
+window.onload = loadPayments;
+
+function openModal(){
+    modal.querySelector("h2").textContent = "Add Payment";
+    document.getElementById("paymentId").disabled = false;
+    editingRow = null; 
+    clearFields();
+    modal.style.display = "flex";
+}
+
+window.onclick = function(e){ if(e.target == modal) modal.style.display = "none"; }
+
+// FIX #2: Post entries straight into database rather than pure visual mockups
+function savePayment(){
+    const paymentId   = document.getElementById("paymentId").value.trim();
+    const customerId  = document.getElementById("customerId").value.trim();
+    const carId       = document.getElementById("carId").value.trim();
+    const paymentMode = document.getElementById("paymentMode").value;
+    const amount      = document.getElementById("amount").value.trim().replace('$', '');
+    const paymentDate = document.getElementById("paymentDate").value;
+
+    if(!paymentId || !customerId || !carId || !paymentMode || !amount || !paymentDate){
+        alert("Please fill all tracking input fields."); return;
+    }
+
+    const formData = new FormData();
+    formData.append("payment_id",   paymentId);
+    formData.append("customer_id",  customerId);
+    formData.append("car_id",       carId);
+    formData.append("payment_mode", paymentMode);
+    formData.append("amount",       amount);
+    formData.append("payment_date", paymentDate);
+
+    const endpoint = editingRow ? "update_payment.php" : "add_payment.php";
+
+    fetch(endpoint, { method: "POST", body: formData })
+    .then(res => res.text())
+    .then(response => {
+        if(response.trim() === "success"){
+            alert("Payment Saved Successfully!");
+            modal.style.display = "none";
+            loadPayments(); // Re-fetch clean transactional rows
+        } else {
+            alert("Database Error: " + response);
+        }
+    });
+}
+
+function editRow(button){
+    editingRow = button.parentElement.parentElement;
+    modal.querySelector("h2").textContent = "Edit Payment";
+    
+    document.getElementById("paymentId").value    = editingRow.cells[0].innerText;
+    document.getElementById("paymentId").disabled = true; // Lock key transaction sequence index
+    document.getElementById("customerId").value   = editingRow.cells[1].innerText;
+    document.getElementById("carId").value        = editingRow.cells[2].innerText;
+    document.getElementById("paymentMode").value  = editingRow.cells[3].innerText.trim();
+    document.getElementById("amount").value       = editingRow.cells[4].innerText.replace('$', '');
+    
+    // FIX #3: Map clean standard YYYY-MM-DD template directly into date wrapper input
+    document.getElementById("paymentDate").value  = editingRow.cells[5].innerText;
+    
+    modal.style.display = "flex";
+}
+
+function deletePayment(id, button){
+    if(confirm("Permanently erase this payment record from history?")){
+        const formData = new FormData();
+        formData.append("payment_id", id);
+        fetch("delete_payment.php", { method: "POST", body: formData })
+        .then(res => res.text())
+        .then(response => {
+            if(response.trim() === "success"){
+                button.parentElement.parentElement.remove();
+            } else {
+                alert("Could not remove entry: " + response);
+            }
+        });
+    }
+}
+
+function clearFields(){
+    ["paymentId","customerId","carId","amount","paymentDate"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("paymentMode").value = "";
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
