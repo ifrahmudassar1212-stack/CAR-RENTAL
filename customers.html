@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HizAuto — Customers</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">Hiz<span>Auto</span></a>
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="manage-cars.html">Cars</a></li>
+        <li><a href="bookings.html">Bookings</a></li>
+        <li><a href="customers.html" class="active">Customers</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="settings.html">Settings</a></li>
+        <li class="logout-link"><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="top-bar">
+        <h1>Customer Management</h1>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Add Customer
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table id="customerTable">
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Joined Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>C1001</td>
+                    <td>Ali Khan</td>
+                    <td>ali@email.com</td>
+                    <td>+92 300 1234567</td>
+                    <td>Lahore</td>
+                    <td>01-01-2026</td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="customerModal">
+    <div class="modal-content">
+        <h2>Add Customer</h2>
+        <div class="input-box"><input type="text" id="custId" placeholder="Customer ID"></div>
+        <div class="input-box"><input type="text" id="custName" placeholder="Full Name"></div>
+        <div class="input-box"><input type="email" id="custEmail" placeholder="Email"></div>
+        <div class="input-box"><input type="text" id="custPhone" placeholder="Phone"></div>
+        <div class="input-box"><input type="text" id="custCity" placeholder="City"></div>
+        <div class="input-box"><label>Joined Date</label><input type="date" id="custDate"></div>
+        <button class="save-btn" onclick="saveCustomer()">Save Customer</button>
+    </div>
+</div>
+
+<script>
+const modal = document.getElementById("customerModal");
+let editingRow = null;
+
+// LOAD customers from database on page open
+function loadCustomers() {
+    fetch("get_customers.php")
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.querySelector("#customerTable tbody");
+        tbody.innerHTML = "";
+        data.forEach(c => {
+            tbody.innerHTML += `
+            <tr>
+                <td>${c.customer_id}</td>
+                <td>${c.full_name}</td>
+                <td>${c.email}</td>
+                <td>${c.phone}</td>
+                <td>${c.city}</td>
+                <td>${c.joined_date}</td>
+                <td>
+                    <button class="action-btn edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteCustomer('${c.customer_id}', this)">Delete</button>
+                </td>
+            </tr>`;
+        });
+    });
+}
+
+window.onload = loadCustomers;
+
+function openModal(){
+    modal.querySelector("h2").textContent = "Add Customer";
+    editingRow = null;
+    clearFields();
+    modal.style.display = "flex";
+}
+
+window.onclick = function(e){ if(e.target==modal) modal.style.display="none"; }
+
+function saveCustomer(){
+    const id    = document.getElementById("custId").value;
+    const name  = document.getElementById("custName").value;
+    const email = document.getElementById("custEmail").value;
+    const phone = document.getElementById("custPhone").value;
+    const city  = document.getElementById("custCity").value;
+    const date  = document.getElementById("custDate").value;
+
+    if(!id||!name||!email||!phone||!city||!date){
+        alert("Please fill all fields"); return;
+    }
+
+    const formData = new FormData();
+    formData.append("customer_id", id);
+    formData.append("full_name",   name);
+    formData.append("email",       email);
+    formData.append("phone",       phone);
+    formData.append("city",        city);
+    formData.append("joined_date", date);
+
+    fetch("add_customer.php", { method:"POST", body:formData })
+    .then(res => res.text())
+    .then(response => {
+        if(response === "success"){
+            alert("Customer Saved Successfully!");
+            modal.style.display = "none";
+            loadCustomers();
+        } else {
+            alert("Error: " + response);
+        }
+    });
+}
+
+function deleteCustomer(id, button){
+    if(confirm("Delete this customer?")){
+        const formData = new FormData();
+        formData.append("customer_id", id);
+        fetch("delete_customer.php", { method:"POST", body:formData })
+        .then(res => res.text())
+        .then(response => {
+            if(response === "success"){
+                button.parentElement.parentElement.remove();
+            }
+        });
+    }
+}
+
+function editRow(button){
+    editingRow = button.parentElement.parentElement;
+    modal.querySelector("h2").textContent = "Edit Customer";
+    document.getElementById("custId").value    = editingRow.cells[0].innerText;
+    document.getElementById("custName").value  = editingRow.cells[1].innerText;
+    document.getElementById("custEmail").value = editingRow.cells[2].innerText;
+    document.getElementById("custPhone").value = editingRow.cells[3].innerText;
+    document.getElementById("custCity").value  = editingRow.cells[4].innerText;
+    document.getElementById("custDate").value  = editingRow.cells[5].innerText;
+    modal.style.display = "flex";
+}
+
+function clearFields(){
+    ["custId","custName","custEmail","custPhone","custCity","custDate"]
+    .forEach(id => document.getElementById(id).value = "");
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
