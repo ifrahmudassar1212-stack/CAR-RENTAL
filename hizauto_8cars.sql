@@ -1,6 +1,5 @@
 -- ============================================================
---   HizAuto Car Rental — Full MySQL Database (8 Cars)
---   Paste this into phpMyAdmin → SQL tab and click GO
+--   HizAuto Car Rental
 -- ============================================================
 
 USE hizauto_db;
