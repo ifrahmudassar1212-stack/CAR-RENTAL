@@ -2,7 +2,7 @@
 --   HizAuto Car Rental
 -- ============================================================
 
-USE hizauto_db;
+USE hizauto;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS rental_history;
